@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="bower_components/platform/platform.js"></script>
+    <script src="../platform/platform.js"></script>
     <link rel="import" href="routing-catcher.html">
     <link rel="import" href="routing-root.html">
     <title>Routing Demo</title>
@@ -17,7 +17,9 @@
         <a href="/index.html">to index</a>
     </routing-recognizer>
 
-    <a href="/test/222">to test</a>
+    <routing-recognizer pattern="/routing-root/index.html">
+        <a href="/test/222">to test</a>
+    </routing-recognizer>
 
     <routing-catcher>
 

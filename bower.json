@@ -1,19 +1,19 @@
 {
   "name": "routing-root",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/alari/routing-root",
   "authors": [
-    "Dmitry Kurinskiy <name.alari@gmail.com>"
+    "Dmitry Kurinskiy"
   ],
   "description": "Polymer html5 Routing Component",
-  "main": "index.html",
+  "main": "routing-root.html",
   "moduleType": [
     "globals"
   ],
   "keywords": [
     "polymer",
     "routing",
-    "webcomponent",
+    "web-components",
     "history",
     "pushstate"
   ],
