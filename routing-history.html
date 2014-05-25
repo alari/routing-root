@@ -1,0 +1,60 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<script src="bower_components/history.js/scripts/bundled/html5/native.history.js"></script>
+
+<polymer-element name="routing-history" on-click="{{clickTriggered}}" attributes="path active">
+    <script>
+        (function(window, History){
+            var isLaunched = false;
+            var histories = [];
+            var state = History.getState();
+
+            Polymer("routing-history", {
+                active: false,
+
+                enteredView: function() {
+                    histories.push(this);
+                },
+                removed: function() {
+                    var i = histories.indexOf(this);
+                    if (i >= 0) {
+                        histories.splice(i, 1);
+                    }
+                },
+                ready: function(){
+                    if(!isLaunched && this.active) {
+                        isLaunched = true;
+
+                        History.Adapter.bind(window,'statechange',function(){
+                            state = History.getState();
+                        }.bind(this));
+
+                        History.Adapter.bind(window,'anchorchange',function(){
+                            hash = History.getHash();
+                        }.bind(this));
+                    }
+                    this.path = state.hash;
+                },
+                path: "",
+                pathChanged: function(o, n) {
+                    if(n != state.hash) {
+                        History.pushState(null, null, n);
+                        state = History.getState();
+                        histories.forEach(function(h){
+                            h.path = n;
+                        })
+                    }
+                },
+
+                clickTriggered: function(e, detail, sender) {
+                    if(this.active && e.target.nodeName.toLowerCase() === 'a') {
+
+                        console.log("click -> ", e.target);
+                        this.path = "/test/222";
+                        e.preventDefault();
+                    }
+                }
+            });
+        })(window, History);
+
+    </script>
+</polymer-element>

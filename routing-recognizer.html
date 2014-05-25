@@ -1,0 +1,45 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<script src="bower_components/route-recognizer/dist/route-recognizer.js"></script>
+
+<polymer-element name="routing-recognizer" attributes="path pattern params">
+    <template>
+        <template if="{{ ok }}">
+            <content></content>
+        </template>
+    </template>
+    <script>
+        (function(RouteRecognizer){
+            var router = new RouteRecognizer();
+            var routes = [];
+
+            Polymer("routing-recognizer", {
+                ok: false,
+                path: "",
+                pattern: "",
+                ready: function(){
+                    routes.push(this);
+                    if(this.pattern) {
+                        router.add([{path: this.pattern, handler: this}]);
+                        this.params = this.params || {};
+                    } else {
+                        this.ok = true;
+                    }
+                },
+                pathChanged: function(o, n) {
+                    routes.forEach(function(r){
+                        r.ok = false;
+                    });
+
+                    var recognize = router.recognize(n), i, r;
+                    if(recognize && recognize.length) {
+                        for(i = 0; i<recognize.length; i += 1) {
+                            r = recognize[i];
+                            r.handler.params = r.params;
+                            r.handler.ok = true;
+                        }
+                    }
+                }
+            });
+        })(RouteRecognizer);
+    </script>
+</polymer-element>

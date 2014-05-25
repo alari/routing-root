@@ -1,0 +1,14 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="routing-recognizer.html">
+<link rel="import" href="routing-history.html">
+
+
+<polymer-element name="routing-root" noscript>
+    <template>
+        <routing-history active="true" path="{{path}}">
+            <h1>{{path}}</h1>
+            <content></content>
+        </routing-history>
+        <routing-recognizer path="{{path}}"></routing-recognizer>
+    </template>
+</polymer-element>

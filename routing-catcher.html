@@ -1,0 +1,29 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="routing-history.html">
+
+<polymer-element name="routing-catcher">
+    <template>
+        <routing-history path="{{path}}"></routing-history>
+
+        <strong>Catcher in the {{path}}</strong>
+        <ul>
+            <template repeat="{{e in events}}">
+                <li>{{ e }}</li>
+            </template>
+        </ul>
+    </template>
+    <script>
+        Polymer("routing-catcher", {
+
+            ready: function(){
+                this.events = [];
+            },
+
+            catchSome: function(e) {
+                console.log("catched!!!", e);
+                this.events.push(e);
+                //this.$.history.setState("/test-"+this.events.length);
+            }
+        });
+    </script>
+</polymer-element>
