@@ -1,80 +1,68 @@
 <link rel="import" href="../polymer/polymer.html">
 <script src="../history.js/scripts/bundled/html5/native.history.js"></script>
 
-<polymer-element name="routing-history" attributes="path active">
+<polymer-element name="routing-root">
     <script>
-        (function (window, document, History) {
-            var isLaunched = false;
-            var histories = [];
-            var state = History.getState();
+        "use strict";
 
-            Polymer("routing-history", {
-                active: false,
+        Polymer({
+            created: function() {
+                this.path = History.getState().hash;
+            },
 
-                enteredView: function () {
-                    histories.push(this);
-                },
-                removed: function () {
-                    var i = histories.indexOf(this);
-                    if (i >= 0) {
-                        histories.splice(i, 1);
-                    }
-                },
-                ready: function () {
-                    if (!isLaunched && this.active) {
-                        isLaunched = true;
+            ready: function () {
+                this.addEventListener("click", this.clickTriggered.bind(this));
+                History.Adapter.bind(window, 'statechange', function () {
+                    this.path = History.getState().hash;
+                }.bind(this));
+                History.Adapter.bind(window, 'anchorchange', function () {
+                    this.path = History.getState().hash;
+                }.bind(this));
+            },
 
-                        History.Adapter.bind(window, 'statechange', function () {
-                            state = History.getState();
-                        }.bind(this));
-
-                        History.Adapter.bind(window, 'anchorchange', function () {
-                            hash = History.getHash();
-                        }.bind(this));
-
-                        document.body.addEventListener("click", this.clickTriggered.bind(this))
-                    }
-                    this.path = state.hash;
-                },
-                path: "",
-                pathChanged: function (o, n) {
-                    if (n != state.hash) {
+            pathChanged: function(o, n) {
+                if(!!n && n !== o) {
+                    this.fire("pathChanged", n);
+                    if(n != History.getState().hash) {
                         History.pushState(null, null, n);
-                        state = History.getState();
-                        histories.forEach(function (h) {
-                            h.path = n;
-                        })
                     }
-                },
+                }
+            },
 
-                clickTriggered: function (e) {
-                    if (this.active) {
-                        var node = e.target;
-                        while (node.nodeName.toLowerCase() !== 'a' && node.parentNode) {
-                            node = node.parentNode;
-                        }
-                        if (node && node.nodeName.toLowerCase() === 'a' && !node.getAttribute("direct-click")) {
-                            var href = node.getAttribute("href");
-                            if(href) {
-                                if(href.indexOf("/") === 0) {
-                                    e.preventDefault();
-                                    console.log("first case", href);
-                                    this.path = href;
-                                } else if (href.indexOf("http:") !== 0 &&
-                                        href.indexOf("https:") !== 0 &&
-                                        href.indexOf("mailto:") !== 0 &&
-                                        href.indexOf("#") !== 0) {
-                                    e.preventDefault();
-                                    if(this.path[this.path.length-1] !== '/') href = '/' + href;
-                                    this.path = this.path + href;
-                                    console.log("second case", href);
-                                }
-                            }
+            set title(t){
+                return History.replaceState(this.data, t, this.path);
+            },
+
+            get title(){
+                return History.getState().title;
+            },
+
+            set data(d){
+                History.replaceState(d, this.title, this.path);
+            },
+
+            get data() {
+                console.log(History.getState());
+                return History.getState().data;
+            },
+
+            clickTriggered: function (e) {
+                var node = e.target;
+                while (node.nodeName.toLowerCase() !== 'a' && node.parentNode && node.parentNode !== this) {
+                    node = node.parentNode;
+                }
+                if (node && node.nodeName.toLowerCase() === 'a' && !node.getAttribute("direct-click")) {
+                    var href = node.getAttribute("href");
+                    if (href) {
+                        if (href.indexOf("/") === 0) {
+                            e.preventDefault();
+                            this.path = href;
                         }
                     }
                 }
-            });
-        })(window, document, History);
+            }
+        });
+
 
     </script>
 </polymer-element>
